@@ -2,6 +2,7 @@ from prepareData import *
 
 def main():
     #trainDataAsCSV()
-    testDataAsCSV()
+    #testDataAsCSV()
+    print("main function run")
 
 main()
