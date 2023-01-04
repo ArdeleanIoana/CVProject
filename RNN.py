@@ -9,17 +9,17 @@ class RNN(nn.Module):
         self.hidden_size = hidden_size
         self.inputToHidden = nn.Linear(input_size + hidden_size, hidden_size)
         self.inputToOutput = nn.Linear(input_size + hidden_size, output_size)
-        self.softmax = nn.LogSoftmax(dim=1) #TODO google this, might need something else
+        self.softmax = nn.Softmax(dim=1) #TODO google this, might need something else
 
     def forward(self,input_tensor, hidden_tensor):
-        combined = torch.cat((input_tensor, hidden_tensor),0)
+        combined = torch.cat((input_tensor, hidden_tensor),1)
         hidden = self.inputToHidden(combined)
         output = self.inputToOutput(combined)
         output = self.softmax(output)
         return output, hidden
 
     def init_hidden(self):
-        return torch.zeros(self.hidden_size)
+        return torch.zeros(1,self.hidden_size)
 
 
 

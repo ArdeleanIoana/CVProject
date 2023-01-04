@@ -8,7 +8,7 @@ class FeedData:
     def __init__(self):
         self.max_nr_frames = 316 #last result from the countFrame functions, represents the the maximum number of frames a gif has in our dataset
         self.trainCSV = pd.read_csv("train.csv")
-        self.testCSV = pd.read_csv("test.csv").items
+        self.testCSV = pd.read_csv("test.csv")
         self.currentTrainRead = 0
         self.currentTestRead = 0
 
@@ -32,8 +32,10 @@ class FeedData:
         framesLumi , fps = self.gifToListOfAvgLumi(gif)
         framesLumi = self.add_padding(framesLumi)
         list = [fps] + framesLumi
+        list = [[[x]] for x in list]
+        tens = torch.FloatTensor(list)
+        return tens
 
-        return torch.FloatTensor(list)
     def rgbToLuminance(self, red,green,blue):
         return int(0.2126 * red + 0.7152 * green + 0.0722 * blue)
     #BGR
@@ -66,9 +68,9 @@ class FeedData:
         path = self.trainCSV["video_name"].values.tolist()[self.currentTrainRead]
         category = self.trainCSV["tag"].values.tolist()[self.currentTrainRead]
         if category == "safe":
-            category_tensor = torch.Tensor([1,0])
+            category_tensor = torch.Tensor([[1,0]])
         else:
-            category_tensor = torch.Tensor([0,1])
+            category_tensor = torch.Tensor([[0,1]])
         self.currentTrainRead += 1
         gif = cv2.VideoCapture(path)
         return category, path,category_tensor,  self.gifToTensor(gif)
@@ -76,16 +78,12 @@ class FeedData:
     def feedNextTest(self):
         path = self.testCSV["video_name"].values.tolist()[self.currentTrainRead]
         category = self.testCSV["tag"].values.tolist()[self.currentTrainRead]
+        if category == "safe":
+            category_tensor = torch.Tensor([[1,0]])
+        else:
+            category_tensor = torch.Tensor([[0,1]])
         self.currentTestRead += 1
         gif = cv2.VideoCapture(path)
-        return self.gifToTensor(gif), category
+        return category , path, category_tensor, self.gifToTensor(gif)
 
 
-def countFrames(gif):
-    count = 0
-    ret, frame = gif.read()  # ret=True if it finds a frame else False.
-    while ret:
-        # read next frame
-        ret, frame = gif.read()
-        count += 1
-    return count
