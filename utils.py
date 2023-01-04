@@ -30,4 +30,6 @@ def maxNumberOfFrames():
 
 def category_from_output(output):
     category_idx = torch.argmax(output).item()
-    return category_idx
+    if category_idx == 0:
+        return "safe"
+    return "unsafe"

@@ -32,8 +32,8 @@ class FeedData:
         framesLumi , fps = self.gifToListOfAvgLumi(gif)
         framesLumi = self.add_padding(framesLumi)
         list = [fps] + framesLumi
-        list = [[[x]] for x in list]
-        tens = torch.FloatTensor(list)
+        list = [[[int(x)]] for x in list]
+        tens = torch.Tensor(list)
         return tens
 
     def rgbToLuminance(self, red,green,blue):

@@ -9,14 +9,15 @@ n_input = 1 # number of all posibile letter. might mean number of all possbible 
 n_categories = 2 # number of classification ouput, obvi 2 for me, safe unsafe
 n_hidden = 128 #hyper parameter
 rnn = RNN(n_input, n_hidden, n_categories)
-criterion = nn.L1Loss()
+criterion = nn.CrossEntropyLoss()
 learning_rate = 0.005
 optimizer = torch.optim.SGD(rnn.parameters(), lr=learning_rate)
 current_loss = 0
 all_losses = []
 plot_steps, print_steps = 10, 10
-n_iters = 100
+n_iters = 1000
 loader = FeedData()
+#problems with loss and epochs, is it going in the whole training set? how many times?
 
 
 
