@@ -84,6 +84,6 @@ class FeedData:
             category_tensor = torch.Tensor([[0,1]])
         self.currentTestRead += 1
         gif = cv2.VideoCapture(path)
-        return category , path, category_tensor, self.gifToTensor(gif)
+        return category, self.gifToTensor(gif)
 
 
