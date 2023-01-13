@@ -7,12 +7,12 @@ from torch import optim
 # inspiration: https://www.youtube.com/watch?v=WEV61GmmPrk&list=PLiDmKRJhglti6HwdDP9kEItTlHMZCDPk_&index=4&t=184s
 #TODO solve problems with loss
 
-
+device = "cuda" if torch.cuda.is_available() else "cpu"
 def trainingLoop(hidden_size, learning_rate, epochs, sequence_length, num_layers, batch_size):
     input_size = 1  # size of one seq input in rnn
     num_classes = 2  # number of classification ouput
     loader = FeedData()
-    rnn = RNN(input_size, hidden_size, num_layers, num_classes, sequence_length)
+    rnn = RNN(input_size, hidden_size, num_layers, num_classes, sequence_length).to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(rnn.parameters(), lr=learning_rate)
 

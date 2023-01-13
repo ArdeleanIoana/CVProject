@@ -31,15 +31,17 @@ def getResults(rnn, test_count):
                 print("tn case")
     return parmDic
 
-def saveToFile(filename, precision, accuracy, recall, learning_rate, n_hidden, n_iters,test_count):
+def saveToFile(filename, precision, accuracy, recall, learning_rate, n_hidden, n_iters,test_count, num_layers, batch_size):
     original_stdout = sys.stdout
     with open(filename, 'w') as f:
         sys.stdout = f  # Change the standard output to the file we created.
         print("-------------HYPER-PARAMS-----------------")
         print("learning rate: " + str(learning_rate))
         print("hidden layers:" + str(n_hidden))
-        print("number of iterations: " + str(n_iters))
+        print("number of epochs: " + str(n_iters))
         print("number of gifs tested: " + str(test_count))
+        print("number of layers: " + str(num_layers))
+        print("batch size: " + str(batch_size))
         print("-------------RESULTS---------------------")
         print("accuracy: " + str(accuracy))
         print("precision: " + str(precision))
@@ -53,7 +55,7 @@ def getAccuracy(dict):
 def getRecall(dict):
     return dict["tp"] / (dict["tp"] + dict["fn"])
 
-def runPerformance(rnn, test_count,filename, learning_rate, n_hidden, n_iters):
+def runPerformance(rnn, test_count,filename, learning_rate, n_hidden, n_iters, num_layers, batch_size):
     dic = getResults(rnn, test_count)
     print(dic)
-    saveToFile(filename,getPrecision(dic),getAccuracy(dic),getRecall(dic), learning_rate, n_hidden, n_iters,test_count)
+    saveToFile(filename,getPrecision(dic),getAccuracy(dic),getRecall(dic), learning_rate, n_hidden, n_iters,test_count, num_layers, batch_size)

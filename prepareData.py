@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -19,7 +21,7 @@ def trainDataAsCSV():
         # Add them to the list
         for room in all_rooms:
             rooms.append((item, str('dataset/train' + '/' + item) + '/' + room))
-
+    random.shuffle(rooms)
     # Build a dataframe
     train_df = pd.DataFrame(data=rooms, columns=['tag', 'video_name'])
     df = train_df.loc[:, ['video_name', 'tag']]
@@ -41,4 +43,8 @@ def testDataAsCSV():
     test_df = pd.DataFrame(data=rooms, columns=['tag', 'video_name'])
     df = test_df.loc[:, ['video_name', 'tag']]
     df.to_csv('test.csv')
-# returns
+
+
+if  __name__ == '__main__':
+    trainDataAsCSV()
+    testDataAsCSV()

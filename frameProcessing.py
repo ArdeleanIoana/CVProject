@@ -11,7 +11,7 @@ class FeedData:
         self.testCSV = pd.read_csv("test.csv")
         self.currentTrainRead = 0
         self.currentTestRead = 0
-        self.trainMaxim = 10 #600 is the number of training samples
+        self.trainMaxim = 600 #600 is the number of training samples
         self.epochs = 0
 
     def getEpochs(self):

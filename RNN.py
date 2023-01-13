@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 # inspiration:https://www.youtube.com/watch?v=Gl2WXLIMvKA&list=PLhhyoLH6IjfxeoooqP9rhU3HJIAVAJ3Vz&index=5
+device = "cuda" if torch.cuda.is_available() else "cpu"
 class RNN(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, num_classes, sequence_length):
         super(RNN, self).__init__()
@@ -11,7 +12,7 @@ class RNN(nn.Module):
 
     def forward(self, x):
         # Set initial hidden and cell states
-        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size)
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
 
         # Forward propagate LSTM
         out, _ = self.rnn(x, h0)
