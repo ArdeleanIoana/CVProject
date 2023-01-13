@@ -6,10 +6,13 @@ from RNN import RNN
 
 def main():
     print("main function run")
-    n_hidden = 125  # hyper parameters
-    learning_rate = 0.001
-    n_iters = 600
-    rnn = trainingLoop(n_hidden, learning_rate,n_iters)
+    hidden_size = 256
+    num_layers = 2
+    sequence_length = 317
+    learning_rate = 0.005
+    batch_size = 10
+    num_epochs = 1
+    rnn = trainingLoop(hidden_size, learning_rate,num_epochs, sequence_length, num_layers, batch_size)
     test_count = 400 #400 is maximum
-    runPerformance(rnn, test_count, "results4.txt", learning_rate, n_hidden, n_iters)
+    runPerformance(rnn, test_count, "results4.txt", learning_rate, hidden_size, num_epochs)
 main()

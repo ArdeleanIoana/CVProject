@@ -11,8 +11,11 @@ class FeedData:
         self.testCSV = pd.read_csv("test.csv")
         self.currentTrainRead = 0
         self.currentTestRead = 0
-        self.trainMaxim = 600 #number of training samples
+        self.trainMaxim = 10 #600 is the number of training samples
+        self.epochs = 0
 
+    def getEpochs(self):
+        return self.epochs
     def gifToListOfAvgLumi(self,gif):
         fps = gif.get(cv2.CAP_PROP_FPS)
         frames = []
@@ -31,9 +34,9 @@ class FeedData:
 
     def gifToTensor(self, gif):
         framesLumi , fps = self.gifToListOfAvgLumi(gif)
-        #framesLumi = self.add_padding(framesLumi)
+        framesLumi = self.add_padding(framesLumi)
         list = [fps] + framesLumi
-        list = [[[int(x)]] for x in list]
+        list = [[int(x)] for x in list]
         tens = torch.Tensor(list)
         return tens
 
@@ -66,27 +69,45 @@ class FeedData:
     # [1 , 0 ] safe
     # [0, 1 ] unsafe
     def feedNextTrain(self):
-        if self.currentTrainRead == self.trainMaxim:
-            self.currentTrainRead = 0
+        if self.currentTrainRead >= self.trainMaxim:
+            self.currentTrainRead = self.trainMaxim - self.currentTrainRead
+            self.epochs += 1
         path = self.trainCSV["video_name"].values.tolist()[self.currentTrainRead]
         category = self.trainCSV["tag"].values.tolist()[self.currentTrainRead]
         if category == "safe":
-            category_tensor = torch.Tensor([[1,0]])
+            category_tensor = torch.Tensor([1,0])
         else:
-            category_tensor = torch.Tensor([[0,1]])
+            category_tensor = torch.Tensor([0,1])
         self.currentTrainRead += 1
         gif = cv2.VideoCapture(path)
-        return category, path,category_tensor,  self.gifToTensor(gif)
+        return category_tensor,  self.gifToTensor(gif)
+    def sampleWithoutIncrementRead(self):
+        path = self.trainCSV["video_name"].values.tolist()[self.currentTrainRead]
+        gif = cv2.VideoCapture(path)
+        return self.gifToTensor(gif)
+    def categoryWithoutIncrementRead(self):
+        category = self.trainCSV["tag"].values.tolist()[self.currentTrainRead]
+        if category == "safe":
+            category_tensor = torch.Tensor([1,0])
+        else:
+            category_tensor = torch.Tensor([0,1])
+        return category_tensor
 
+    def feedBatch(self, batch_size):
+        gifs = [self.sampleWithoutIncrementRead() for _ in range(batch_size)]
+        gifs = torch.stack(gifs)
+        categories = [self.categoryWithoutIncrementRead() for _ in range(batch_size)]
+        categories = torch.stack(categories)
+        self.currentTrainRead += batch_size
+        if self.currentTrainRead >= self.trainMaxim:
+            self.currentTrainRead = self.trainMaxim - self.currentTrainRead
+            self.epochs += 1
+        return gifs, categories
     def feedNextTest(self):
         path = self.testCSV["video_name"].values.tolist()[self.currentTestRead]
         category = self.testCSV["tag"].values.tolist()[self.currentTestRead]
-        if category == "safe":
-            category_tensor = torch.Tensor([[1,0]])
-        else:
-            category_tensor = torch.Tensor([[0,1]])
         self.currentTestRead += 1
         gif = cv2.VideoCapture(path)
-        return category, self.gifToTensor(gif)
+        return category, torch.stack([self.gifToTensor(gif)])
 
 

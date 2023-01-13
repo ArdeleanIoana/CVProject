@@ -12,9 +12,7 @@ def getResults(rnn, test_count):
     for i in range(test_count):
         print(i)
         category, tens = feeder.feedNextTest()
-        hidden = rnn.init_hidden()
-        for i in range(tens.size()[0]):
-            output, hidden = rnn(tens[i], hidden)
+        output = rnn(tens)
         guess = category_from_output(output)
         print("guess:" + guess + " true: " + category)
         if guess == "safe":

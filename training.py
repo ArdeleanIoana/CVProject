@@ -3,31 +3,30 @@ import cv2
 from RNN import *
 from frameProcessing import FeedData
 from utils import category_from_output
+from torch import optim
 # inspiration: https://www.youtube.com/watch?v=WEV61GmmPrk&list=PLiDmKRJhglti6HwdDP9kEItTlHMZCDPk_&index=4&t=184s
-#problems with loss
+#TODO solve problems with loss
 
-def train(line_tensor, rnn):
-    hidden = rnn.init_hidden()
-    for i in range(line_tensor.size()[0]):
-        output, hidden = rnn(torch.FloatTensor(line_tensor[i]), hidden)
-    return output
 
-def trainingLoop(n_hidden, learning_rate,n_iters):
-    n_input = 1  # size of one seq input in rnn
-    n_categories = 2  # number of classification ouput
+def trainingLoop(hidden_size, learning_rate, epochs, sequence_length, num_layers, batch_size):
+    input_size = 1  # size of one seq input in rnn
+    num_classes = 2  # number of classification ouput
     loader = FeedData()
-    rnn = RNN(n_input, n_hidden, n_categories)
+    rnn = RNN(input_size, hidden_size, num_layers, num_classes, sequence_length)
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(rnn.parameters(), lr=learning_rate)
-    for i in range(n_iters):
-        print(str(i) + " out of " + str(n_iters))
-        category, line, category_tensor, line_tensor = loader.feedNextTrain()
-        output = train(line_tensor, rnn)
-        loss = criterion(output, category_tensor)
+    optimizer = optim.Adam(rnn.parameters(), lr=learning_rate)
+
+    while loader.getEpochs() < epochs:
+        print(str(loader.getEpochs()) + " out of " + str(epochs))
+        gif_batch, category_batch = loader.feedBatch(batch_size)
+        scores = rnn(gif_batch)
+        loss = criterion(scores, category_batch)
+        # backward
         optimizer.zero_grad()
         loss.backward()
+        # gradient descent update step/adam step
         optimizer.step()
-        print(" loss " + str(loss.item()))
+        print("loss: " + str(loss))
     return rnn
 
 def manualTest(RNN):
