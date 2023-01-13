@@ -49,11 +49,17 @@ def saveToFile(filename, precision, accuracy, recall, learning_rate, n_hidden, n
         sys.stdout = original_stdout  # Reset the standard output to its original value
 
 def getPrecision(dict):
+    if dict["tp"] == 0 and  dict["fp"] == 0:
+        return 0
     return dict["tp"] / (dict["tp"] + dict["fp"])
+
 def getAccuracy(dict):
     return (dict["tp"] + dict["tn"]) / (dict["tp"] + dict["fp"] + dict["tn"] + dict["fn"])
+
+
 def getRecall(dict):
     return dict["tp"] / (dict["tp"] + dict["fn"])
+
 
 def runPerformance(rnn, test_count,filename, learning_rate, n_hidden, n_iters, num_layers, batch_size):
     dic = getResults(rnn, test_count)

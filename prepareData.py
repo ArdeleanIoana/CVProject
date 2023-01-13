@@ -39,6 +39,7 @@ def testDataAsCSV():
         for room in all_rooms:
             rooms.append((item, str('dataset/test' + '/' + item) + '/' + room))
 
+    random.shuffle(rooms)
     # Build a dataframe
     test_df = pd.DataFrame(data=rooms, columns=['tag', 'video_name'])
     df = test_df.loc[:, ['video_name', 'tag']]
