@@ -25,8 +25,6 @@ def train(line_tensor, category_tensor, optimizer, rnn, criterion):
 def trainingLoop(n_hidden, learning_rate,n_iters):
     n_input = 1  # size of one seq input in rnn
     n_categories = 2  # number of classification ouput
-    current_loss = 0
-    all_losses = []
     loader = FeedData()
     rnn = RNN(n_input, n_hidden, n_categories)
     criterion = nn.CrossEntropyLoss()

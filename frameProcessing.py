@@ -31,7 +31,7 @@ class FeedData:
 
     def gifToTensor(self, gif):
         framesLumi , fps = self.gifToListOfAvgLumi(gif)
-        framesLumi = self.add_padding(framesLumi)
+        #framesLumi = self.add_padding(framesLumi)
         list = [fps] + framesLumi
         list = [[[int(x)]] for x in list]
         tens = torch.Tensor(list)
