@@ -1,0 +1,9 @@
+-------------HYPER-PARAMS-----------------
+learning rate: 0.5
+hidden layers:100
+number of iterations: 2
+number of gifs tested: 10
+-------------RESULTS---------------------
+accuracy: 1.0
+precision: 1.0
+recall: 1.0

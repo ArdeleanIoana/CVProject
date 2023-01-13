@@ -6,10 +6,10 @@ from RNN import RNN
 
 def main():
     print("main function run")
-    n_hidden = 128  # hyper parameter
-
-    learning_rate = 0.005
-    n_iters = 1
+    n_hidden = 100  # hyper parameters
+    learning_rate = 0.5
+    n_iters = 2
     rnn = trainingLoop(n_hidden, learning_rate,n_iters)
-    runPerformance(rnn)
+    test_count = 10 #400 is maximum
+    runPerformance(rnn, test_count, "results2.txt", learning_rate, n_hidden, n_iters)
 main()

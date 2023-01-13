@@ -11,6 +11,7 @@ class FeedData:
         self.testCSV = pd.read_csv("test.csv")
         self.currentTrainRead = 0
         self.currentTestRead = 0
+        self.trainMaxim = 600 #number of training samples
 
     def gifToListOfAvgLumi(self,gif):
         fps = gif.get(cv2.CAP_PROP_FPS)
@@ -65,6 +66,8 @@ class FeedData:
     # [1 , 0 ] safe
     # [0, 1 ] unsafe
     def feedNextTrain(self):
+        if self.currentTrainRead == self.trainMaxim:
+            self.currentTrainRead = 0
         path = self.trainCSV["video_name"].values.tolist()[self.currentTrainRead]
         category = self.trainCSV["tag"].values.tolist()[self.currentTrainRead]
         if category == "safe":
@@ -76,8 +79,8 @@ class FeedData:
         return category, path,category_tensor,  self.gifToTensor(gif)
 
     def feedNextTest(self):
-        path = self.testCSV["video_name"].values.tolist()[self.currentTrainRead]
-        category = self.testCSV["tag"].values.tolist()[self.currentTrainRead]
+        path = self.testCSV["video_name"].values.tolist()[self.currentTestRead]
+        category = self.testCSV["tag"].values.tolist()[self.currentTestRead]
         if category == "safe":
             category_tensor = torch.Tensor([[1,0]])
         else:

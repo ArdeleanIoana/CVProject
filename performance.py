@@ -6,10 +6,10 @@ import cv2
 # positive = safe
 # negative = unsafe
 
-def getResults(rnn):
+def getResults(rnn, test_count):
     parmDic = {"fp": 0, "tp": 0, "fn": 0, "tn": 0}
     feeder = FeedData()
-    for i in range(400):
+    for i in range(test_count):
         print(i)
         category, tens = feeder.feedNextTest()
         hidden = rnn.init_hidden()
@@ -33,10 +33,16 @@ def getResults(rnn):
                 print("tn case")
     return parmDic
 
-def saveToFile(filename, precision, accuracy, recall):
+def saveToFile(filename, precision, accuracy, recall, learning_rate, n_hidden, n_iters,test_count):
     original_stdout = sys.stdout
     with open(filename, 'w') as f:
         sys.stdout = f  # Change the standard output to the file we created.
+        print("-------------HYPER-PARAMS-----------------")
+        print("learning rate: " + str(learning_rate))
+        print("hidden layers:" + str(n_hidden))
+        print("number of iterations: " + str(n_iters))
+        print("number of gifs tested: " + str(test_count))
+        print("-------------RESULTS---------------------")
         print("accuracy: " + str(accuracy))
         print("precision: " + str(precision))
         print("recall: " + str(recall))
@@ -49,7 +55,7 @@ def getAccuracy(dict):
 def getRecall(dict):
     return dict["tp"] / (dict["tp"] + dict["fn"])
 
-def runPerformance(rnn):
-    dic = getResults(rnn)
+def runPerformance(rnn, test_count,filename, learning_rate, n_hidden, n_iters):
+    dic = getResults(rnn, test_count)
     print(dic)
-    saveToFile("results.txt",getPrecision(dic),getAccuracy(dic),getRecall(dic))
+    saveToFile(filename,getPrecision(dic),getAccuracy(dic),getRecall(dic), learning_rate, n_hidden, n_iters,test_count)
