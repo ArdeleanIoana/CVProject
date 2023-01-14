@@ -3,8 +3,8 @@ from frameProcessing import FeedData
 from utils import category_from_output
 from RNN import RNN
 import cv2
-# positive = safe
-# negative = unsafe
+# positive = unsafe
+# negative = safe
 
 def getResults(rnn, test_count):
     parmDic = {"fp": 0, "tp": 0, "fn": 0, "tn": 0}
@@ -17,18 +17,18 @@ def getResults(rnn, test_count):
         print("guess:" + guess + " true: " + category)
         if guess == "safe":
             if category == "safe":
-                parmDic["tp"] += 1
-                print("tp case")
-            else:
-                parmDic["fp"] += 1
-                print("fp case")
-        else:
-            if category == "safe":
-                parmDic["fn"] += 1
-                print("fn case")
-            else:
                 parmDic["tn"] += 1
                 print("tn case")
+            else:
+                parmDic["fn"] += 1
+                print("fn case")
+        else:
+            if category == "safe":
+                parmDic["fp"] += 1
+                print("fp case")
+            else:
+                parmDic["tp"] += 1
+                print("tp case")
     return parmDic
 
 def saveToFile(filename, precision, accuracy, recall, learning_rate, n_hidden, n_iters,test_count, num_layers, batch_size):

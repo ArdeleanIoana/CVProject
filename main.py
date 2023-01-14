@@ -10,11 +10,11 @@ def main():
     num_layers = 2
     sequence_length = 317
     learning_rate = 0.005
-    batch_size = 15
-    num_epochs = 1
+    batch_size = 4
+    num_epochs = 2
     rnn = trainingLoop(hidden_size, learning_rate,num_epochs, sequence_length, num_layers, batch_size)
-    test_count = 30 #400 is maximum
-    runPerformance(rnn, test_count, "resultsRNNsmall.txt", learning_rate, hidden_size, num_epochs, num_layers, batch_size)
+    test_count = 400#400 is maximum
+    runPerformance(rnn, test_count, "resultsLSTM3.txt", learning_rate, hidden_size, num_epochs, num_layers, batch_size)
 
 if  __name__ == '__main__':
     main()

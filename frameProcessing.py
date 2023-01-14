@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import torch
 import pandas as pd
-
+import json
 
 class FeedData:
     def __init__(self):
@@ -13,6 +13,7 @@ class FeedData:
         self.currentTestRead = 0
         self.trainMaxim = 600 #600 is the number of training samples
         self.epochs = 0
+
 
     def getEpochs(self):
         return self.epochs
@@ -84,6 +85,7 @@ class FeedData:
     def sampleWithoutIncrementRead(self):
         path = self.trainCSV["video_name"].values.tolist()[self.currentTrainRead]
         gif = cv2.VideoCapture(path)
+        self.currentTrainRead += 1
         return self.gifToTensor(gif)
     def categoryWithoutIncrementRead(self):
         category = self.trainCSV["tag"].values.tolist()[self.currentTrainRead]
@@ -91,14 +93,31 @@ class FeedData:
             category_tensor = torch.Tensor([1,0])
         else:
             category_tensor = torch.Tensor([0,1])
+        self.currentTrainRead += 1
         return category_tensor
 
     def feedBatch(self, batch_size):
         gifs = [self.sampleWithoutIncrementRead() for _ in range(batch_size)]
+        self.currentTrainRead -= batch_size
         gifs = torch.stack(gifs)
         categories = [self.categoryWithoutIncrementRead() for _ in range(batch_size)]
         categories = torch.stack(categories)
-        self.currentTrainRead += batch_size
+
+        if self.currentTrainRead >= self.trainMaxim:
+            self.currentTrainRead = self.trainMaxim - self.currentTrainRead
+            self.epochs += 1
+        return gifs, categories
+
+    def feedBatchFromFile(self,batchSize):
+        f = open('trainingData.json')
+        jsonTrainData = json.load(f)
+        batch = jsonTrainData[self.currentTrainRead:(self.currentTrainRead+batchSize)]
+        gifs = [torch.tensor([ x["frames"]]) for x in batch]
+        gifs = torch.stack(gifs)
+        categories = [x["category"] for x in batch]
+        categories = [ torch.Tensor([1,0]) if x == "safe" else torch.Tensor([0,1]) for x in categories]
+        categories = torch.stack(categories)
+        self.currentTrainRead += batchSize
         if self.currentTrainRead >= self.trainMaxim:
             self.currentTrainRead = self.trainMaxim - self.currentTrainRead
             self.epochs += 1
