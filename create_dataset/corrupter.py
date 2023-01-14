@@ -43,7 +43,7 @@ class Corrupter:
                     frames.insert(whereStart,self.redFrame(frames[0].shape))
                     whereStart +=1
                 whereStart = whereStart + distance
-            self.saveGif(frames,count)
+            self.saveGif(frames,count,fps)
 
 
     def blackWhiteCorruption(self,gif,count):
@@ -63,7 +63,7 @@ class Corrupter:
         finally:
             corruption = self.blackWhiteFilcker(flickerCount,repetitionWhite,repetitionBlack,frames[0].shape)
             corruptedframes = frames[:where] + corruption + frames[where:]
-            self.saveGif(corruptedframes,count)
+            self.saveGif(corruptedframes,count,fps)
     def gifAsListOfFrames(self, gif):
         #fps = gif.get(cv2.CAP_PROP_FPS)
         frames = []
@@ -74,10 +74,11 @@ class Corrupter:
             if isinstance(frame, (np.ndarray, np.generic)):
                 frames.append(frame)
         return frames
-    def saveGif(self, frames,count):
+    def saveGif(self, frames,count,originalFps):
+        originalFps += 1
         print("Saving GIF file")
         with imageio.get_writer(self.destinationFolder + "\\" + self.filenameTemp + str(count) + ".gif",
-                                mode="I",fps=3) as writer:
+                                mode="I",fps=originalFps) as writer:
             for idx, frame in enumerate(frames):
                 if isinstance(frame, (np.ndarray, np.generic)):
                     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
