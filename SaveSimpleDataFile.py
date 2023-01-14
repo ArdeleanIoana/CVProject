@@ -6,12 +6,12 @@ def dictToString(dict):
     list = dict['frames']
     category = dict['category']
     return "{ \"frames\":" + str(list) + ", \"category\":" +" \""+ category + "\"}"
-def saveArraysMain(filename, source):
+def saveArraysMain(filename, source,count):
     data = FeedData()
     trainCSV = pd.read_csv(source)
 
     writeToFile(filename, "[")
-    for iter in range(600):
+    for iter in range(count):
         path = trainCSV["video_name"].values.tolist()[iter]
         category = trainCSV["tag"].values.tolist()[iter]
         gif = cv2.VideoCapture(path)
@@ -41,5 +41,5 @@ def writeToFile(filename,result):
             sys.stdout = original_stdout  # Reset the standard output to its original value
 
 if __name__ == '__main__':
-    #saveArraysMain("trainingData.json","train.csv")
-    saveArraysMain("testData.json", "test.csv")
+    #saveArraysMain("trainingData.json","train.csv",600)
+    saveArraysMain("testData.json", "test.csv",400)

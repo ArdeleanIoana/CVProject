@@ -18,10 +18,7 @@ def trainingLoop(hidden_size, learning_rate, epochs, sequence_length, num_layers
 
     while loader.getEpochs() < epochs:
         print(str(loader.getEpochs()) + " out of " + str(epochs))
-        gif_batch, category_batch = loader.feedBatch(batch_size)
-        print("shapes for gif and category in batch")
-        print(gif_batch.shape)
-        print(category_batch.shape)
+        gif_batch, category_batch = loader.feedBatchFromFile(batch_size)
         scores = rnn(gif_batch)
         loss = criterion(scores, category_batch)
         # backward

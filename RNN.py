@@ -10,10 +10,13 @@ class RNN(nn.Module):
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
         self.fc = nn.Linear(hidden_size, num_classes)
 
-    def forward(self, x):
+    def forward(self, x): #x shape(50,316 1)
         # Set initial hidden and cell states
         h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
-        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
+        fps = x[0][0][0]
+        aux = [[[fps for _ in range(self.hidden_size)] for y in range(x.size(0))] for k in range(self.num_layers)]
+        c0 = torch.tensor(aux)
+        #c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
         # Forward propagate LSTM
         out, _ = self.lstm(x, (h0,c0))
         out = out[:,-1,:]

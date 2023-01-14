@@ -6,6 +6,8 @@ number of gifs tested: 400
 number of layers: 2
 batch size: 50
 -------------RESULTS---------------------
-accuracy: 0.6675
-precision: 0.6634146341463415
-recall: 0.68
+accuracy: 0.665
+precision: 1.0
+recall: 0.33
+
+# after cell state changes
