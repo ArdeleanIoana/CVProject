@@ -6,15 +6,15 @@ from RNN import RNN
 
 def main():
     print("main function run")
-    hidden_size = 250
+    hidden_size = 10
     num_layers = 2
     sequence_length = 317
     learning_rate = 0.005
-    batch_size = 50
-    num_epochs = 10
+    batch_size = 30
+    num_epochs = 100
     rnn = trainingLoop(hidden_size, learning_rate,num_epochs, sequence_length, num_layers, batch_size)
     test_count = 400#400 is maximum
-    runPerformance(rnn, test_count, "resultsLSTM10.txt", learning_rate, hidden_size, num_epochs, num_layers, batch_size)
+    runPerformance(rnn, test_count, "resultsLSTM20.txt", learning_rate, hidden_size, num_epochs, num_layers, batch_size)
 
 if  __name__ == '__main__':
     main()

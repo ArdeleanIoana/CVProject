@@ -27,6 +27,8 @@ def trainingLoop(hidden_size, learning_rate, epochs, sequence_length, num_layers
         # gradient descent update step/adam step
         optimizer.step()
         print("loss: " + str(loss))
+    done = {'state_dict': rnn.state_dict(), 'optimizer_dict': optimizer.state_dict()}
+    torch.save(done,"try1.pth.tar")
     return rnn
 
 def manualTest(RNN):

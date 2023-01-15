@@ -1,0 +1,11 @@
+-------------HYPER-PARAMS-----------------
+learning rate: 0.01
+hidden layers:10
+number of epochs: 100
+number of gifs tested: 400
+number of layers: 2
+batch size: 30
+-------------RESULTS---------------------
+accuracy: 0.5
+precision: 0
+recall: 0.0
