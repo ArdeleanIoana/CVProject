@@ -4,7 +4,7 @@ import torch
 import pandas as pd
 import json
 
-class FeedData:
+class FrameProcessing:
     def __init__(self):
         self.max_nr_frames = 316 #last result from the countFrame functions, represents the the maximum number of frames a gif has in our dataset
         self.trainCSV = pd.read_csv("train.csv")
@@ -33,13 +33,7 @@ class FeedData:
         padding = [last_frame_lumi for x in range(required_pad)]
         return framesLumiList + padding
 
-    def gifToTensor(self, gif):
-        framesLumi , fps = self.gifToListOfAvgLumi(gif)
-        framesLumi = self.add_padding(framesLumi)
-        list = [fps] + framesLumi
-        list = [[int(x)] for x in list]
-        tens = torch.Tensor(list)
-        return tens
+
 
     def rgbToLuminance(self, red,green,blue):
         return int(0.2126 * red + 0.7152 * green + 0.0722 * blue)
@@ -67,69 +61,7 @@ class FeedData:
         avg = avg / (len(listFrame) * len(listFrame[0]))
         return avg
 
-    # [1 , 0 ] safe
-    # [0, 1 ] unsafe
-    def feedNextTrain(self):
-        if self.currentTrainRead >= self.trainMaxim:
-            self.currentTrainRead = self.trainMaxim - self.currentTrainRead
-            self.epochs += 1
-        path = self.trainCSV["video_name"].values.tolist()[self.currentTrainRead]
-        category = self.trainCSV["tag"].values.tolist()[self.currentTrainRead]
-        if category == "safe":
-            category_tensor = torch.Tensor([1,0])
-        else:
-            category_tensor = torch.Tensor([0,1])
-        self.currentTrainRead += 1
-        gif = cv2.VideoCapture(path)
-        return category_tensor,  self.gifToTensor(gif)
-    def sampleWithoutIncrementRead(self):
-        path = self.trainCSV["video_name"].values.tolist()[self.currentTrainRead]
-        gif = cv2.VideoCapture(path)
-        self.currentTrainRead += 1
-        return self.gifToTensor(gif)
-    def categoryWithoutIncrementRead(self):
-        category = self.trainCSV["tag"].values.tolist()[self.currentTrainRead]
-        if category == "safe":
-            category_tensor = torch.Tensor([1,0])
-        else:
-            category_tensor = torch.Tensor([0,1])
-        self.currentTrainRead += 1
-        return category_tensor
 
-    def feedBatch(self, batch_size):
-        gifs = [self.sampleWithoutIncrementRead() for _ in range(batch_size)]
-        self.currentTrainRead -= batch_size
-        gifs = torch.stack(gifs)
-        categories = [self.categoryWithoutIncrementRead() for _ in range(batch_size)]
-        categories = torch.stack(categories)
 
-        if self.currentTrainRead >= self.trainMaxim:
-            self.currentTrainRead = self.trainMaxim - self.currentTrainRead
-            self.epochs += 1
-        return gifs, categories
-
-    def feedBatchFromFile(self,batchSize):
-        f = open('trainingData.json')
-        jsonTrainData = json.load(f)
-        batch = jsonTrainData[self.currentTrainRead:(self.currentTrainRead+batchSize)]
-        gifs = [torch.tensor([[y] for y in x["frames"]]) for x in batch]
-        gifs = torch.stack(gifs)
-        categories = [x["category"] for x in batch]
-        categories = [ torch.Tensor([1,0]) if x == "safe" else torch.Tensor([0,1]) for x in categories]
-        categories = torch.stack(categories)
-        self.currentTrainRead += batchSize
-        if self.currentTrainRead >= self.trainMaxim:
-            self.currentTrainRead = self.trainMaxim - self.currentTrainRead
-            self.epochs += 1
-        f.close()
-        return gifs, categories
-    def feedNextTest(self):
-        f = open('testData.json')
-        jsonTestData = json.load(f)
-        gif = jsonTestData[self.currentTestRead]["frames"]
-        category = jsonTestData[self.currentTestRead]["category"]
-        self.currentTestRead += 1
-        f.close()
-        return category, torch.tensor([[[x] for x in gif]])
 
 

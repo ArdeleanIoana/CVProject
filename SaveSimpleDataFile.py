@@ -7,7 +7,7 @@ def dictToString(dict):
     category = dict['category']
     return "{ \"frames\":" + str(list) + ", \"category\":" +" \""+ category + "\"}"
 def saveArraysMain(filename, source,count):
-    data = FeedData()
+    data = FrameProcessing()
     trainCSV = pd.read_csv(source)
 
     writeToFile(filename, "[")

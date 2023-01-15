@@ -1,5 +1,5 @@
 import sys
-from frameProcessing import FeedData
+from FeedData import FeedData
 from utils import category_from_output
 from RNN import RNN
 import cv2
