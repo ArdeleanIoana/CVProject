@@ -1,4 +1,5 @@
 # CVProject
+Observation - the inspiration(if any) is mentioned at the beginning of the file(rnn.py and prepareData.py)
 project files description:
 <br/>
 <br/>
